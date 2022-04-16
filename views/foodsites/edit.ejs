@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FeedTheNeedy</title>
+
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css"
+      integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I"
+      crossorigin="anonymous"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.js"></script>
+
+    <script src="https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js"></script>
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/external_stylesheets/app.css" />
+  </head>
+
+  <body class="d-flex flex-column vh-100 backg">
+    <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-primary">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">FeedTheNeedy</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarNavAltMarkup"
+          aria-controls="navbarNavAltMarkup"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <div class="navbar-nav">
+            <a class="nav-link" href="/">Home</a>
+            <a class="nav-link" href="/foodsites">FoodSite</a>
+            <a class="nav-link" href="/foodsites/new">Add New FoodSite</a>
+          </div>
+          <div class="navbar-nav ml-auto">
+            <% if(!currentUser) {%>
+            <a class="nav-link" href="/login">Login</a>
+            <a class="nav-link" href="/register">Register</a>
+            <% } else {%>
+            <a class="nav-link" href="/logout">Logout</a>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </nav>
+    
+    <ma  in class="container mt-5">
+      <% if(success && success.length) {%>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <%= success %>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <% } %>
+        
+        <% if(error && error.length) {%>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <%= error %>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <% } %>
+        <div class="row">
+          <h1 class="text-center">Edit Foodsite</h1>
+          <div class="col-md-6 offset-md-3">
+            <form
+              action="/foodsites/<%=foodsite._id%>?_method=PUT"
+              method="POST"
+              novalidate
+              class="validated-form"
+              enctype="multipart/form-data"
+            >
+              <div class="mb-3">
+                <label class="form-label" for="title">Title</label>
+                <input
+                  class="form-control"
+                  type="text"
+                  id="title"
+                  name="foodsite[title]"
+                  value="<%=foodsite.title %>"
+                  required
+                />
+                <div class="valid-feedback">Looks fine!</div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="location">Location</label>
+                <input
+                  class="form-control"
+                  type="text"
+                  id="location"
+                  name="foodsite[location]"
+                  value="<%=foodsite.location %>"
+                  required
+                />
+                <div class="valid-feedback">Looks fine!</div>
+              </div>
+        
+              <div class="mb-3">
+                <label class="form-label" for="contact">Contact No</label>
+                <div class="input-group">
+                  <span class="input-group-text" id="contact-label">&#128222;</span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="contact"
+                    placeholder="1234567890"
+                    aria-label="contact"
+                    aria-describedby="contact-label"
+                    name="foodsite[contact]"
+                    value="<%=foodsite.contact %>"
+                    required
+                  />\
+                  <div class="valid-feedback">Looks fine!</div>
+                </div>
+              </div>
+        
+              <div class="mb-3">
+                <label class="form-label" for="description">Description</label>
+                <textarea
+                  class="form-control"
+                  type="text"
+                  id="description"
+                  name="foodsite[description]"
+                  required
+                >
+                <%= foodsite.description%></textarea
+                >
+                <div class="valid-feedback">Looks fine!</div>
+              </div>
+              <div class="mb-3">
+                <div class="form-file custom-file">
+                  <input
+                    type="file"
+                    class="form-file-input"
+                    id="image"
+                    name="image"
+                    multiple
+                  />
+                  <label class="form-file-label" for="image">
+                    <span class="form-file-text custom-file-label"
+                      >Add more image(s)...</span
+                    >
+                    <span class="form-file-button">Browse</span>
+                  </label>
+                </div>
+              </div>
+              <div class="mb-3">
+                <% foodsite.images.forEach(function(img, i) { %>
+        
+                <img src="<%=img.thumbnail %>" class="img-thumbnail" alt="" />
+                <div class="form-check-inline">
+                  <input
+                    type="checkbox"
+                    id="image-<%=i%>"
+                    name="deleteImages[]"
+                    value="<%=img.filename%>"
+                  />
+                </div>
+                <label for="image-<%=i%>">Delete?</label>
+                <% })%>
+              </div>
+              <div class="mb-3">
+                <button class="btn btn-success">Update Foodsite</button>
+              </div>
+            </form>
+            <a href="/foodsites/<%= foodsite._id%>">
+              <button class="btn btn-info">Back To Foodsite</button>
+            </a>
+          </div>
+        </div>
+    </main>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+      integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js"
+      integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/"
+      crossorigin="anonymous"
+    ></script>
+
+    <script src="/javascripts/validateForms.js"></script>
+  </body>
+</html>
+
+
+
+
