@@ -16,18 +16,16 @@ module.exports.renderNewForm = (req, res) => {
 module.exports.createFoodsite = async (req, res, next) => {
   const foodsite = new Foodsite(req.body.foodsite);
   foodsite.author = req.user._id;
-  console.log(req.user);
-  console.log(foodsite.author);
   foodsite.images = req.files.map((f) => ({
     url: f.path,
     filename: f.filename,
   }));
-  if (foodsite.images.length >= 5) {
+  if (foodsite.images.length > 3) {
     req.flash(
       "error",
       "Sorry! You cannot upload more than 3 images :( Add a new Foodsite with less number of images!!"
     );
-    res.redirect(`/foodsites`);
+    res.redirect(`/foodsites/new`);
   } else {
     const geoData = await geocoder
       .forwardGeocode({
@@ -53,7 +51,6 @@ module.exports.showFoodsite = async (req, res) => {
     .populate("author");
   if (!foodsite) {
     req.flash("error", "Requested foodsite isn't available ;)");
-    console.log(req.flash);
     return res.redirect("/foodsites");
   }
   res.render("foodsites/show", { foodsite });
@@ -71,29 +68,39 @@ module.exports.renderEditForm = async (req, res) => {
 
 module.exports.updateFoodsite = async (req, res) => {
   const { id } = req.params;
-  console.log(req.body);
   const foodsite = await Foodsite.findByIdAndUpdate(id, {
     ...req.body.foodsite,
   });
   const imgs = req.files.map((f) => ({ url: f.path, filename: f.filename }));
-  foodsite.images.push(...imgs);
-  await foodsite.save();
+  let delimg = 0;
   if (req.body.deleteImages) {
-    for (let filename of req.body.deleteImages) {
-      await cloudinary.uploader.destroy(filename);
-    }
-    await foodsite.updateOne({
-      $pull: { images: { filename: { $in: req.body.deleteImages } } },
-    });
+    delimg = req.body.deleteImages.length;
   }
-  req.flash("success", "Successfully updated the foodsite :)");
-  res.redirect(`/foodsites/${foodsite._id}`);
+  if (imgs.length + foodsite.images.length - delimg > 3) {
+    req.flash(
+      "error",
+      "Sorry! You cannot upload more than 3 images :( Add a new Foodsite with less number of images!!"
+    );
+    res.redirect(`/foodsites/${foodsite._id}`);
+  } else {
+    foodsite.images.push(...imgs);
+    await foodsite.save();
+    if (req.body.deleteImages) {
+      for (let filename of req.body.deleteImages) {
+        await cloudinary.uploader.destroy(filename);
+      }
+      await foodsite.updateOne({
+        $pull: { images: { filename: { $in: req.body.deleteImages } } },
+      });
+    }
+    req.flash("success", "Successfully updated the foodsite :)");
+    res.redirect(`/foodsites/${foodsite._id}`);
+  }
 };
 
 module.exports.deleteFoodsite = async (req, res) => {
   const { id } = req.params;
   await Foodsite.findByIdAndDelete(id);
-  console.log(Foodsite);
   req.flash("success", "Successfully deleted foodsite! VISIT AGAIN :)");
   res.redirect("/foodsites");
 };

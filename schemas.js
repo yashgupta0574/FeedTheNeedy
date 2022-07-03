@@ -27,7 +27,7 @@ const Joi = BaseJoi.extend(extension);
 module.exports.FoodSiteSchema = Joi.object({
   foodsite: Joi.object({
     title: Joi.string().required().escapeHTML(),
-    contact: Joi.number().required().min(0).max(9999999999),
+    contact: Joi.number().required().min(1000000000).max(9999999999),
     location: Joi.string().required().escapeHTML(),
     description: Joi.string().required().escapeHTML(),
   }).required(),
