@@ -20,8 +20,8 @@ const foodsiteRoutes = require("./routes/foodsites");
 
 const MongoDBStore = require("connect-mongo")(session);
 
-//const dbUrl = process.env.DB_URL || "mongodb://localhost:27017/feed_the_needy";
-const dbUrl = "mongodb://localhost:27017/feed_the_needy";
+const dbUrl = process.env.DB_URL || "mongodb://localhost:27017/feed_the_needy";
+//const dbUrl = "mongodb://localhost:27017/feed_the_needy";
 mongoose.connect(dbUrl, {
   useNewUrlParser: true,
   useCreateIndex: true,
@@ -152,7 +152,7 @@ app.use((err, req, res, next) => {
   const { statusCode = 500 } = err;
   if (!err.message)
     err.message =
-      "Oh No, Something Went Wrong....Server encountered unexpected error :(";
+      "Oh No, Something Went Wrong....Server encountered an unexpected error :(";
   res.status(statusCode).render("error", { err });
 });
 
