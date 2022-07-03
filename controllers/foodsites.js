@@ -15,11 +15,13 @@ module.exports.renderNewForm = (req, res) => {
 
 module.exports.createFoodsite = async (req, res, next) => {
   const foodsite = new Foodsite(req.body.foodsite);
+  foodsite.author = req.user._id;
+  console.log(req.user);
+  console.log(foodsite.author);
   foodsite.images = req.files.map((f) => ({
     url: f.path,
     filename: f.filename,
   }));
-  foodsite.author = req.user._id;
   if (foodsite.images.length >= 5) {
     req.flash(
       "error",
@@ -44,9 +46,14 @@ module.exports.createFoodsite = async (req, res, next) => {
 };
 
 module.exports.showFoodsite = async (req, res) => {
-  const foodsite = await Foodsite.findById(req.params.id);
+  const foodsite = await Foodsite.findById(req.params.id)
+    .populate({
+      path: "author",
+    })
+    .populate("author");
   if (!foodsite) {
     req.flash("error", "Requested foodsite isn't available ;)");
+    console.log(req.flash);
     return res.redirect("/foodsites");
   }
   res.render("foodsites/show", { foodsite });

@@ -32,10 +32,10 @@ body {
 }
 
 .btn-secondary, .btn-secondary:hover{
-    color: #333;
+    color: rgb(23, 11, 11);
     text-shadow: none;
 }
 
 .textcss{
-    color: rgb(199, 22, 96);
+    color: rgb(0, 105, 14);
 }
