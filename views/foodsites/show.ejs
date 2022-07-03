@@ -1,15 +1,19 @@
 <% layout('layouts/boilerplate')%>
 
 <div class="row">
-  <div class="col-8">
+  <div class="col-xl-8 row-sm my-3">
     <div id="map"></div>
   </div>
-  <div class="col-4">
+  <div class="col-xl-4 row-sm my-3">
     <div id="foodsiteCarousel" class="carousel slide" data-ride="carousel">
       <div class="carousel-inner">
         <% foodsite.images.forEach((img, i) => { %>
         <div class="carousel-item <%= i === 0 ? 'active' : ''%>">
-          <img src="<%= img.url%>" class="d-block w-100 h-10" alt="" />
+          <img
+            src="<%= img.url%>"
+            class="d-block w-100 h-10"
+            alt="ERROR:IMAGE LOADING"
+          />
         </div>
         <% }) %>
       </div>
@@ -34,7 +38,6 @@
       </a>
       <% } %>
     </div>
-
     <div class="card mb-3">
       <div class="card-body">
         <h5 class="card-title"><%= foodsite.title%></h5>
@@ -42,10 +45,14 @@
       </div>
       <ul class="list-group list-group-flush">
         <li class="list-group-item text-muted"><%= foodsite.location%></li>
-        <li class="list-group-item"> Uploaded by <%= foodsite.author.username%> </li>
         <li class="list-group-item">
-          <span>&#128222;</span
-          ><a href="tel:9876543212" class="col" "><%= foodsite.contact%></a>
+          Uploaded by <%= foodsite.author.username%>
+        </li>
+        <li class="list-group-item">
+          <span>&#128241;</span
+          ><a href="tel:<%= foodsite.contact%>" class="col btn btn-light"
+            ><%= foodsite.contact%></a
+          >
         </li>
       </ul>
       <% if( currentUser && foodsite.author.equals(currentUser._id)) {%>
@@ -67,13 +74,8 @@
     </div>
   </div>
 </div>
-</main>
-<footer class="mt-auto mx-auto text-black-75">
-  <p>&copy;FeedTheNeedy@2022</p>
-</footer>
 <script>
   const mapToken = '<%-process.env.MAPBOX_TOKEN%>';
   const foodsite = <%- JSON.stringify(foodsite) %>
 </script>
-
 <script src="/javascripts/showPageMap.js"></script>
