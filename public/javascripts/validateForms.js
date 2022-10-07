@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  bsCustomFileInput.init();
+  bsCustomFileInput.init(); //dynamic custom file input means we can take more than 2 ducuments from user
   const forms = document.querySelectorAll(".validated-form");
   Array.from(forms).forEach(function (form) {
     form.addEventListener(
