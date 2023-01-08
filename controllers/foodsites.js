@@ -37,7 +37,7 @@ module.exports.createFoodsite = async (req, res, next) => {
     await foodsite.save();
     req.flash(
       "success",
-      "Successfully made a new Foodsite!....Thanks for taking initiative in helping the needy :)"
+      "Successfully made a new Foodsite!.....Thanks for taking initiative in helping the needy :)"
     );
     res.redirect(`/foodsites/${foodsite._id}`);
   }
