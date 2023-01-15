@@ -25,7 +25,7 @@ module.exports.isAuthor = async (req, res, next) => {
   const { id } = req.params;
   const site = await Foodsite.findById(id);
   if (!site.author.equals(req.user._id)) {
-    req.flash("error", "Sorry you are not author of that foodsite!");
+    req.flash("error", "Sorry you are not the creator of that foodsite!");
     return res.redirect(`/foodsites/${id}`);
   }
   next();
